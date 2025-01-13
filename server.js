@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import admin from 'firebase-admin';
-import { readFile } from 'fs/promises';
+import admin from "firebase-admin";
 
 dotenv.config();
 
@@ -9,12 +8,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Initialize Firebase Admin SDK
-const serviceAccount = JSON.parse(
-  await readFile(new URL(process.env.FIREBASE_ADMIN_SDK_PATH, import.meta.url))
-);
-
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  }),
 });
 
 // Middleware to verify Firebase ID token
